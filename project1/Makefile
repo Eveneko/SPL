@@ -6,7 +6,7 @@ BISON=bison
 	$(FLEX) lex.l
 .syntax: syntax.y
 	$(BISON) -t -d syntax.y
-splc:
+splc: clean .lex .syntax
 	@mkdir bin
 	touch bin/splc
 	@chmod +x bin/splc
