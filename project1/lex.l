@@ -21,7 +21,7 @@
 %}
 
 %option yylineno
-decInt 0|(-?[1-9][0-9]*)
+decInt ^0|(-?[1-9][0-9]*)$
 hexInt (0[xX]0|0[xX][1-9a-fA-F][1-9a-fA-F]{0,7})
 int {decInt}|{hexInt}
 frac \.[0-9]+

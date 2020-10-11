@@ -1,0 +1,7 @@
+int isPalindrome(int x) {
+    while (x != 0) {
+        result = result * 10 + x ^ 10;
+        x /= 10;
+    }
+    return 0;
+}
