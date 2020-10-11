@@ -11,27 +11,35 @@
         yylloc.last_line = yylineno; \
         yylloc.last_column = yycolno + yyleng; \
         yycolno += yyleng;
-    #define ERRPR_A(msg) fprintf(stdout, "Error type A at Line %d: %s %s\n", yylineno, yytext); syntaxErrorNum = 1;
-    #define ERROR_B(msg) fprintf(stdout, "Error type B at Line %d: %s\n", yylineno, msg); syntaxErrorNum = 1;
+    
+    #define ERROR_A() fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext); syntaxError = 1;
+    #define ERROR_B(lineno, msg) fprintf(stdout, "Error type B at Line %d: %s\n", lineno, msg); syntaxError = 1;
+    
     int yycolno = 1;
-    int syntaxErrorNum = 0;
+    int syntaxError = 0;
     
 %}
 
 %option yylineno
-digit [0-9]
 decInt 0|(-?[1-9][0-9]*)
-hexInt ^(0[xX]0|0[xX][1-9a-fA-F][1-9a-fA-F]{0,7})$
+hexInt (0[xX]0|0[xX][1-9a-fA-F][1-9a-fA-F]{0,7})
 int {decInt}|{hexInt}
 frac \.[0-9]+
 float -?(0|[1-9][0-9]*){frac}
-letter [a-zA-Z]
 _letter [a-zA-Z_]
-char \'{letter}\'
-id {_letter}[{_letter}|{digit}]*
+id [a-zA-Z_][0-9a-zA-Z_]*
+wrong_id [0-9][0-9a-zA-Z_]*
+char ('{_letter}')|('\\[xX][0-9a-fA-F]{1,2}')
+wrong_char ('.+')
 
 %%
 
+{float} {
+    char *strVal = malloc(strlen(yytext));
+    strcpy(strVal, yytext);
+    yylval._astNode = newAst("FLOAT", TOKEN_WITH_VALUE, strVal, yylineno, 0);
+    return FLOAT;
+}
 {decInt} {
     int intVal = atoi(yytext);
     char *strVal = malloc(10);
@@ -40,28 +48,18 @@ id {_letter}[{_letter}|{digit}]*
     return INT;
 }
 {hexInt} {
-    char *strVal = malloc(strlen(yytext));
-    strcpy(strVal, yytext);
+    int intVal = 0;
+    sscanf(yytext, "%x", &intVal);
+    char *strVal = malloc(10);
+    sprintf(strVal, "%d", intVal);
     yylval._astNode = newAst("INT", TOKEN_WITH_VALUE, strVal, yylineno, 0);
     return INT;
-}
-{float} {
-    char *strVal = malloc(strlen(yytext));
-    strcpy(strVal, yytext);
-    yylval._astNode = newAst("FLOAT", TOKEN_WITH_VALUE, strVal, yylineno, 0);
-    return FLOAT;
 }
 {char} {
     char *strVal = malloc(strlen(yytext));
     strcpy(strVal, yytext);
     yylval._astNode = newAst("CHAR", TOKEN_WITH_VALUE, strVal, yylineno, 0);
     return CHAR;
-}
-{id} {
-    char *strVal = malloc(strlen(yytext));
-    strcpy(strVal, yytext);
-    yylval._astNode = newAst("ID", TOKEN_WITH_VALUE, strVal, yylineno, 0);
-    return ID;
 }
 "int" {
     yylval._astNode = newAst("TYPE", TOKEN_WITH_VALUE, "int", yylineno, 0);
@@ -94,6 +92,20 @@ id {_letter}[{_letter}|{digit}]*
 "return" {
     yylval._astNode = newAst("RETURN", TOKEN_WITHOUT_VALUE, NULL, yylineno, 0);
     return RETURN;
+}
+{id} {
+    char *strVal = malloc(strlen(yytext));
+    strcpy(strVal, yytext);
+    yylval._astNode = newAst("ID", TOKEN_WITH_VALUE, strVal, yylineno, 0);
+    return ID;
+}
+{wrong_id} {
+    ERROR_A();
+    return ID;
+}
+{wrong_char} {
+    ERROR_A();
+    return CHAR;
 }
 "." {
     yylval._astNode = newAst("DOT", TOKEN_WITHOUT_VALUE, NULL, yylineno, 0);
@@ -188,11 +200,11 @@ id {_letter}[{_letter}|{digit}]*
     return RC;
 }
 [\n\r] {
-    ++yylineno;
     yycolno = 1;
 }
 [ \t] {}
 . {
+    ERROR_A();
     return LEXEME_ERROR;
 }
 <<EOF>> {

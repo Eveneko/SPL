@@ -1,7 +1,5 @@
 #define INDENT_NUM 2
 
-FILE *fin, *fout;
-
 typedef enum tokenType{
     NON_TERMINAL,
     TOKEN_WITH_VALUE,

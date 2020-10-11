@@ -93,9 +93,7 @@ VarDec:
     | VarDec LB INT RB { $$ = newAst("VarDec", NON_TERMINAL, NULL, @1.first_line, 4, $1, $2, $3, $4); }
     ;
 FunDec:
-      ID LP VarList error { ERROR_B(@1.last_line, "Missing closing parenthesis ')'"); }
-    | ID LP VarList RP { $$ = newAst("FunDec", NON_TERMINAL, NULL, @1.first_line, 4, $1, $2, $3, $4); }
-    | ID LP error { ERROR_B(@1.last_line, "Missing closing parenthesis ')'"); }
+      ID LP VarList RP { $$ = newAst("FunDec", NON_TERMINAL, NULL, @1.first_line, 4, $1, $2, $3, $4); }
     | ID LP RP { $$ = newAst("FunDec", NON_TERMINAL, NULL, @1.first_line, 3, $1, $2, $3); }
     ;
 VarList:
@@ -109,8 +107,7 @@ ParamDec:
 /* statement */
 CompSt:
       LC DefList StmtList RC { $$ = newAst("CompSt", NON_TERMINAL, NULL, @1.first_line, 4, $1, $2, $3, $4); }
-    | LC DefList StmtList DefList error { ERROR_B(@3.last_line, "Missing specifier"); }
-    ;
+      ;
 StmtList:
       Stmt StmtList { $$ = newAst("StmtList", NON_TERMINAL, NULL, @1.first_line, 2, $1, $2); }
     | %empty { $$ = newAst("StmtList", NON_TERMINAL, NULL, yylineno, 0); }
@@ -118,7 +115,6 @@ StmtList:
 Stmt:
       Exp SEMI { $$ = newAst("Stmt", NON_TERMINAL, NULL, @1.first_line, 2, $1, $2); }
     | CompSt { $$ = newAst("Stmt", NON_TERMINAL, NULL, @1.first_line, 1, $1); }
-    | RETURN Exp error { ERROR_B(@1.last_line, "Missing semicolon ';'"); }
     | RETURN Exp SEMI { $$ = newAst("Stmt", NON_TERMINAL, NULL, @1.first_line, 3, $1, $2, $3); }
     | IF LP Exp RP Stmt { $$ = newAst("Stmt", NON_TERMINAL, NULL, @1.first_line, 5, $1, $2, $3, $4, $5); }
     | IF LP Exp RP Stmt ELSE Stmt { $$ = newAst("Stmt", NON_TERMINAL, NULL, @1.first_line, 7, $1, $2, $3, $4, $5, $6, $7); }
@@ -131,8 +127,7 @@ DefList:
     | %empty { $$ = newAst("DefList", NON_TERMINAL, NULL, yylineno, 0); }
     ;
 Def:
-      Specifier DecList error { ERROR_B(@1.last_line, "Missing semicolon ';'"); }
-    | Specifier DecList SEMI { $$ = newAst("Def", NON_TERMINAL, NULL, @1.first_line, 3, $1, $2, $3); }
+      Specifier DecList SEMI { $$ = newAst("Def", NON_TERMINAL, NULL, @1.first_line, 3, $1, $2, $3); }
     ;
 DecList:
       Dec { $$ = newAst("DecList", NON_TERMINAL, NULL, @1.first_line, 1, $1); }
@@ -161,7 +156,6 @@ Exp:
     | LP Exp RP { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 3, $1, $2, $3); }
     | MINUS Exp { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 2, $1, $2); }
     | NOT Exp { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 2, $1, $2); }
-    | ID LP Args error { ERROR_B(@1.last_line, "Missing closing parenthesis ')'"); }
     | ID LP Args RP { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 4, $1, $2, $3, $4); }
     | ID LP RP { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 3, $1, $2, $3); }
     | Exp LB Exp RB { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 4, $1, $2, $3, $4); }
@@ -170,8 +164,6 @@ Exp:
     | INT { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 1, $1); }
     | FLOAT { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 1, $1); }
     | CHAR { $$ = newAst("Exp", NON_TERMINAL, NULL, @1.first_line, 1, $1); }
-    | Exp LEXEME_ERROR Exp {}
-    | LEXEME_ERROR {}
     ;
 Args:
       Exp COMMA Args { $$ = newAst("Args", NON_TERMINAL, NULL, @1.first_line, 3, $1, $2, $3); }
@@ -184,7 +176,7 @@ void init() {
     root = NULL;
     yylineno = 1;
     yycolno = 1;
-    syntaxError = 0;
+    syntaxErrorNum = 0;
 }
 
 void yyerror(const char *s){
@@ -201,7 +193,7 @@ int main(int argc, char **argv){
     }
     init();
     yyparse();
-    if(syntaxError == 0){
+    if(syntaxErrorNum == 0){
         printAst(root, 0);
     }
     return 0;

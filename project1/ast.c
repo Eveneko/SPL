@@ -12,13 +12,17 @@ astNode *newAst(char *astNodeName, tokenType astNodeType, char *astNodeValue, in
     _astNode->astNodeValue = astNodeValue;
     _astNode->lineno = lineno;
     _astNode->childNum = childNum;
-    _astNode->childNodes = NULL;
+    if(childNum){
+        _astNode->childNodes = malloc(childNum * sizeof(astNode *));
+    }else{
+        _astNode->childNodes = NULL;
+    }
 
     va_list args;
     va_start(args, childNum);
 
     for(astNode **ptr = _astNode->childNodes; childNum--; ++ptr){
-        *ptr = va_arg(args, astNode*);
+        *ptr = va_arg(args, astNode *);
     }
 
     return _astNode;
@@ -27,15 +31,15 @@ astNode *newAst(char *astNodeName, tokenType astNodeType, char *astNodeValue, in
 void printAst(astNode *_astNode, int indentNum){
     if(_astNode->astNodeType == NON_TERMINAL && _astNode->childNodes != NULL){
         indent(indentNum);
-        fprintf(fout, "%s (%d)\n", _astNode->astNodeName, _astNode->lineno);
+        fprintf(stdout, "%s (%d)\n", _astNode->astNodeName, _astNode->lineno);
     }
     else if(_astNode->astNodeType == TOKEN_WITH_VALUE){
         indent(indentNum);
-        fprintf(fout, "%s %s\n", _astNode->astNodeName, _astNode->astNodeValue);
+        fprintf(stdout, "%s: %s\n", _astNode->astNodeName, _astNode->astNodeValue);
     }
     else if(_astNode->astNodeType == TOKEN_WITHOUT_VALUE){
         indent(indentNum);
-        fprintf(fout, "%s\n", _astNode->astNodeName);
+        fprintf(stdout,"%s\n",_astNode->astNodeName);
     }
     for(int i = 0; i < _astNode->childNum; ++i){
         printAst(_astNode->childNodes[i], indentNum + INDENT_NUM);
@@ -51,7 +55,7 @@ void freeAst(astNode *_astNode){
 
 void indent(int n){
     while(n-- > 0){
-        fprintf(fout, " ");
+        fprintf(stdout, " ");
     }
     return;
 }
