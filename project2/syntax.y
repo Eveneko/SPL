@@ -53,6 +53,7 @@
 %left LP RP
 %left LB RB
 %left DOT
+%left UMINUS
 
 %%
 
