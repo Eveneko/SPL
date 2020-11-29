@@ -6,24 +6,26 @@
     #define EXIT_OK 0
     #define EXIT_FAIL 1
 
-    #define DEBUG(syntax) fprintf(stdout, "%s(%d)\n", syntax, yylineno);
-    #define ERROR_TYPE_A() fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext); syntax_error = 1;
-    #define ERROR_TYPE_B(lineno, reason) fprintf(stdout, "Error type B at Line %d: %s\n", lineno, reason); syntax_error = 1;
-
-    #define DISPLAY_SYNTAX(syntax) // fprintf(stdout, "%s(%d)\n", syntax, yylineno);
-    #define DISPLAY_TOKEN(token) // fprintf(stdout, "%s[%d](%s)\n", token, yycolno, yytext);
-    #define LEXEME_ERROR() // fprintf(stderr, "Error lexeme %s at Line %d\n", yytext, yylineno); 
-    #define SYNTAX_ERROR() // fprintf(stderr, "ERROR line %d: %s\n", yylloc.first_line, s);
     #define YY_USER_ACTION \
         yylloc.first_line = yylineno; \
         yylloc.first_column = yycolno; \
         yylloc.last_line = yylineno; \
         yylloc.last_column = yycolno + yyleng; \
         yycolno += yyleng; 
-    // and global variables
+
+    #define ERROR_TYPE_A() fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext); syntax_error = 1;
+    #define ERROR_TYPE_B(lineno, msg) fprintf(stdout, "Error type B at Line %d: %s\n", lineno, msg); syntax_error = 1;
+    #define DEBUG(syntax) fprintf(stdout, "%s(%d)\n", syntax, yylineno);
+
+    #define DISPLAY_SYNTAX(syntax) // fprintf(stdout, "%s(%d)\n", syntax, yylineno);
+    #define DISPLAY_TOKEN(token) // fprintf(stdout, "%s[%d](%s)\n", token, yycolno, yytext);
+    #define LEXEME_ERROR() // fprintf(stderr, "Error lexeme %s at Line %d\n", yytext, yylineno); 
+    #define SYNTAX_ERROR() // fprintf(stderr, "ERROR line %d: %s\n", yylloc.first_line, s);
+        
     int yycolno = 1; 
     int syntax_error = 0;
 %}
+
 %option yylineno
 %x C_COMMENT
 int 0|([1-9][0-9]{0,9})|(-?0[xX][1-9a-fA-F][0-9a-fA-F]{0,7})|(0[xX]0)
@@ -261,4 +263,5 @@ wrong_char ('.+')
     return ERROR_LEXEME; 
 }
 <<EOF>> {return 0;}
+
 %%
