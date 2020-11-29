@@ -1,7 +1,7 @@
 #include "semantic.hpp"
 
-#define DEBUG(s, node) //fprintf(stdout, "DEBUG: %20s | ", s); node->print_self();
-#define ERROR(s, node) //fprintf(stdout, "ERROR: %20s | ", s); node->print_self();
+#define DEBUG(s, node)
+#define ERROR(s, node)
 
 multimap<string, Variable_Type*> var_map = multimap<string, Variable_Type*>();
 multimap<string, Structure_Type*> type_map = multimap<string, Structure_Type*>();
@@ -42,7 +42,6 @@ Variable_Type* getVariable(string identifier) {
 }
 
 void updateVariable(Variable_Type *variable) {
-    // printf("updateVariable %s\n", variable->name.c_str());
     Variable_Type *var = getVariable(variable->name);
     if (!var) {
         var_map.insert(make_pair(variable->name, variable));
@@ -70,11 +69,6 @@ Structure_Type *getStructure(string identifier) {
 }
 
 void updateStructure(Structure_Type *structure) {
-    // printf("updateStructure %s with fields:", structure->name.c_str());
-    // for (auto i: structure->field) {
-    //     printf(" %s,", i->name.c_str());
-    // }
-    // printf("\n");
     Structure_Type *stru = getStructure(structure->name);
     if (!stru) {
         type_map.insert(make_pair(structure->name, structure));
@@ -157,15 +151,12 @@ Type *EMPTYTYPE = new Type();
 Variable_Type *EMPTYVAR = new Variable_Type("$", EMPTYTYPE);
 
 void checkProgram(AST *root) {
-    // root->print();
     DEBUG("checkProgram", root);
     checkExtDefList(root->child[0]);
 }
 
 void checkExtDefList(AST *node) {
     DEBUG("checkExtDefList", node);
-    // ExtDefList: ExtDef ExtDefList
-    // ExtDefList: %empty
     switch (node->child_num) {
         case 0: 
             return;
@@ -272,11 +263,6 @@ Variable_Type *checkFunc(AST *node, Type *type) {
     string identifier = checkID(node->child[0]);
     if (node->child[2]->type_name.compare("VarList") == 0) {
         vector<Variable_Type *> variables = checkVarList(node->child[2]);
-        // printf("function %s has", node->value.c_str());
-        // for (auto i : variables) {
-        //     printf(" %s,", i->name.c_str());
-        // }
-        // printf("\n");
         return new Variable_Type(identifier, type, variables, true, node->lineno);
     }
     if (node->child[2]->type_name.compare("RP") == 0) {
@@ -312,7 +298,6 @@ vector<Variable_Type*> checkDefList(AST *node) {
     DEBUG("checkDefList", node);
     if (node->child_num == 0) {
         // DefList: %empty
-        // assert(false && "checkDefList Failed");
         return vector<Variable_Type*>();
     }
     assert(node->child[0]->type_name.compare("Def") == 0);

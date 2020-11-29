@@ -1,9 +1,9 @@
-#include<bits/stdc++.h>
-#include"ast.hpp"
+#include <bits/stdc++.h>
+#include "ast.hpp"
+
 using namespace std;
 
 enum class TokenType {
-    // primary type
     INT_T, CHAT_T, FLOAT_T,
 };
 
