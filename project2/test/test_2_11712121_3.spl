@@ -1,0 +1,7 @@
+int test_2_11712121_3()
+{
+    float f = 1.0;
+    char c = 'a';
+    int i = f - c;
+    return c;
+}

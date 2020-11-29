@@ -1,0 +1,10 @@
+struct S{
+    int a;
+    float b;
+}
+
+int test_2_11712121_5()
+{
+    struct S s;
+    s.a = 1;
+}

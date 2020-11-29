@@ -35,7 +35,7 @@ Variable_Type* getVariable(string identifier) {
         return NULL;
     }
     assert(count == 1);
-    for (int i = 0, len = var_map.count(identifier);i < len; ++i,++it) {
+    for (int i = 0, len = var_map.count(identifier); i < len; ++i,++it) {
 		return it->second;
 	}
     return NULL;
@@ -43,15 +43,14 @@ Variable_Type* getVariable(string identifier) {
 
 void updateVariable(Variable_Type *variable) {
     Variable_Type *var = getVariable(variable->name);
-    if (!var) {
-        var_map.insert(make_pair(variable->name, variable));
-    } else {
-        if (variable->isfunction == true) {
+    if (var) {
+        if (variable->isfunction) {
             semantic_error(SemanticErrorType::REDEFINED_FUNCTION, variable->lineno, variable->name.c_str());
         } else {
             semantic_error(SemanticErrorType::REDEFINED_VARIABLE, variable->lineno, variable->name.c_str());
         }
-        
+    } else {
+        var_map.insert(make_pair(variable->name, variable));
     }
 }
 
@@ -62,26 +61,19 @@ Structure_Type *getStructure(string identifier) {
         return NULL;
     }
     assert(count == 1);
-    for (int i = 0, len = type_map.count(identifier);i < len; ++i,++it) {
+    for (int i = 0, len = type_map.count(identifier); i < len; ++i,++it) {
 		return it->second;
 	}
     return NULL;
 }
 
 void updateStructure(Structure_Type *structure) {
-    Structure_Type *stru = getStructure(structure->name);
-    if (!stru) {
+    Structure_Type *struc = getStructure(structure->name);
+    if (!struc) {
         type_map.insert(make_pair(structure->name, structure));
     } else {
         semantic_error(SemanticErrorType::REDEFINED_STRUCTURE, structure->lineno, structure->name.c_str());
     }
-}
-
-void report_semantic_error(const char *s,...) {
-    va_list args;
-    va_start(args, s);
-    vfprintf(stdout, s, args);
-    fprintf(stdout, "\n");
 }
 
 void semantic_error(SemanticErrorType error_type, ...) {
@@ -168,6 +160,13 @@ void checkExtDefList(AST *node) {
         default:
             assert(false && "checkExtDefList Failed");
     }
+}
+
+void report_semantic_error(const char *s,...) {
+    va_list args;
+    va_start(args, s);
+    vfprintf(stdout, s, args);
+    fprintf(stdout, "\n");
 }
 
 /**
