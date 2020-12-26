@@ -283,5 +283,24 @@ public:
     }
 };
 
+extern map<string, int> table;
+
 void irInit();
 void irProgram(AST *root);
+void irExrDefList(AST *node);
+void irExtDef(AST *node);
+Type *irSpecifier(AST *node);
+Type *irType(AST *node);
+Type *irStructSpecifier(AST *node);
+void *irFunc(AST *node, Type *type);
+void irCompSt(AST *node);
+void irDefList(AST *node);
+void irDef(AST *node);
+void irStmt(AST *node);
+void irStmtList(AST *node);
+void irDec(AST *node, Type *type);
+TAC* irVarDec(AST *node, Type* type);
+int irExp(AST *node, bool single=false);
+void irVarList(AST *node);
+void irParamDec(AST *node);
+vector<int> irArgs(AST *node);

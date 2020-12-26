@@ -13,7 +13,7 @@ Type *checkSructSpecifier(AST *node);
 Variable_Type *checkFunc(AST *node, Type *type);
 string checkID(AST *node);
 void checkCompSt(AST *node, Type *type);
-vector<Variable_Type *> checkDefList(AST *node);
+vector<Variable_Type*> checkDefList(AST *node);
 vector<Variable_Type*> checkDef(AST *node);
 vector<Variable_Type*> checkDecList(AST *node, Type *type);
 void checkStmt(AST *node, Type *type);
@@ -508,6 +508,11 @@ Type *checkExp(AST *node, bool single) {
             return func_variable->type;
             assert(false && "checkExp Failed");
         }
+        if (node->child[0]->type_name.compare("READ") == 0) {
+            assert(node->child[1]->type_name.compare("LP") == 0);
+            assert(node->child[2]->type_name.compare("RP") == 0);
+            return new Primitive_Type(TokenType::INT_T);
+        }
         assert(false && "checkExp Failed");
     } else if (node->child_num == 4) {
         if (node->child[0]->type_name.compare("ID") == 0) {
@@ -625,6 +630,10 @@ void checkStmt(AST *node, Type *type) {
             Type *returnType = checkExp(node->child[2]);
             assert(typecheck(returnType, new Primitive_Type(TokenType::INT_T)) == true);
             checkStmt(node->child[4], type);
+            return;
+        } else if (node->child[0]->type_name.compare("WRITE") == 0) {
+            // WRITE LP Exp RP SEMI
+            assert(node->child[4]->type_name.compare("SEMI") == 0);
             return;
         }
         assert(false && "checkStmt Failed");
