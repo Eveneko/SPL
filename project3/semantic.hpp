@@ -194,3 +194,6 @@ enum class SemanticErrorType {
     REDEFINED_STRUCTURE = 15,
 };
 extern void semantic_error(SemanticErrorType error_type, ...);
+
+// project3 invoke
+Primitive_Type *checkType(AST *node);

@@ -26,14 +26,14 @@ public:
     virtual string to_string(){
         return "";
     }
-    virtual int emit(){
+    virtual int genid(){
         int index = tac_vector.size();
         tac_vector.push_back(this);
         return index;
     }
 };
 
-class LabelTAC: TAC {
+class LabelTAC: public TAC {
 public:
     LabelTAC(int address){
         TAC::address = address;
@@ -45,7 +45,7 @@ public:
     }
 };
 
-class FunctionTAC: TAC {
+class FunctionTAC: public TAC {
 public:
     FunctionTAC(int address, int name){
         TAC::address = address;
@@ -288,6 +288,7 @@ extern map<string, int> table;
 void irInit();
 void irProgram(AST *root);
 void irExrDefList(AST *node);
+void irExtDecList(AST *node, Type * type);
 void irExtDef(AST *node);
 Type *irSpecifier(AST *node);
 Type *irType(AST *node);
@@ -296,6 +297,7 @@ void *irFunc(AST *node, Type *type);
 void irCompSt(AST *node);
 void irDefList(AST *node);
 void irDef(AST *node);
+void irDecList(AST *node, Type *type);
 void irStmt(AST *node);
 void irStmtList(AST *node);
 void irDec(AST *node, Type *type);
@@ -304,3 +306,11 @@ int irExp(AST *node, bool single=false);
 void irVarList(AST *node);
 void irParamDec(AST *node);
 vector<int> irArgs(AST *node);
+
+int getIR(string name);
+void putIR(string name, int id);
+int genid(TAC *tac);
+int *genlist(int id = tac_vector.size() + 1);
+
+void irIF(int id, int tbranch, int fbranch);
+void irWHILE();
