@@ -1,7 +1,6 @@
 #include "semantic.hpp"
 
 #define DEBUG(s, node)
-#define ERROR(s, node)
 
 multimap<string, Variable_Type*> var_map = multimap<string, Variable_Type*>();
 multimap<string, Structure_Type*> type_map = multimap<string, Structure_Type*>();
@@ -191,8 +190,8 @@ void checkExtDef(AST *node) {
     if (node->child[1]->type_name.compare("FunDec") == 0) {
         // ExtDef: Specifier FunDec CompSt
         Variable_Type *func_variable = checkFunc(node->child[1], type);
-        checkCompSt(node->child[2], type);
         updateVariable(func_variable);
+        checkCompSt(node->child[2], type);
         return;
     }
     assert(false && "checkExtDef Failed");
@@ -328,14 +327,17 @@ vector<Variable_Type*> checkDef(AST *node) {
  */
 vector<Variable_Type*> checkDecList(AST *node, Type *type) {
     DEBUG("checkDecList", node);
+    assert(node->type_name.compare("DecList") == 0);
     assert(node->child[0]->type_name.compare("Dec") == 0);
     vector<Variable_Type*> variables = vector<Variable_Type*>();
+    Variable_Type *variable = checkDec(node->child[0], type);
+    variables.push_back(variable);
     if (node->child_num == 1) {
-        Variable_Type *variable = checkDec(node->child[0], type);
-        variables.push_back(variable);
         return variables;
     } else if (node->child_num == 3) {
-
+        vector<Variable_Type*> next_variables = checkDecList(node->child[2], type);
+        variables.insert(variables.end(), next_variables.begin(), next_variables.end());
+        return variables;
     }
     assert(false && "checkDecList Failed");
 }
@@ -346,6 +348,7 @@ vector<Variable_Type*> checkDecList(AST *node, Type *type) {
  */
 Variable_Type *checkDec(AST *node, Type *type) {
     DEBUG("checkDec", node);
+    assert(node->type_name.compare("Dec") == 0);
     assert(node->child[0]->type_name.compare("VarDec") == 0);
     Variable_Type *variable = checkVarDec(node->child[0], type);
     if (node->child_num == 1) {
@@ -372,6 +375,7 @@ Variable_Type *checkDec(AST *node, Type *type) {
  */
 Variable_Type *checkVarDec(AST *node, Type *type) {
     DEBUG("checkVarDec", node);
+    assert(node->type_name.compare("VarDec") == 0);
     if (node->child_num == 1) {
         assert(node->child[0]->type_name.compare("ID") == 0);
         string identifier = checkID(node->child[0]);
@@ -396,6 +400,7 @@ int checkINT(AST *node) {
 
 Type *checkExp(AST *node, bool single) {
     DEBUG("checkVarDec", node);
+    assert(node->type_name.compare("Exp") == 0);
     if (node->child_num == 1) {
         // CHAR
         if (node->child[0]->type_name.compare("ID") == 0) {
@@ -490,7 +495,7 @@ Type *checkExp(AST *node, bool single) {
         if (node->child[0]->type_name.compare("LP") == 0) {
             assert(node->child[1]->type_name.compare("Exp") == 0);
             assert(node->child[2]->type_name.compare("RP") == 0);
-            Type *expType = checkExp(node->child[0]);
+            Type *expType = checkExp(node->child[1]);
             return expType;
         }
         // ID LP RP
@@ -550,10 +555,8 @@ Type *checkExp(AST *node, bool single) {
             assert(false && "checkExp Failed");
         }
         assert(false && "checkExp Failed");
-
-        
     }
-    printf("node->child_num = %d\n", node->child_num);
+    printf("node->child_num = %d node->type_name = %s\n", node->child_num, node->type_name.c_str());
     assert(false && "checkExp Failed");
 }
 
