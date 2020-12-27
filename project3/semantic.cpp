@@ -35,7 +35,7 @@ Variable_Type* getVariable(string identifier) {
         return NULL;
     }
     assert(count == 1);
-    for (int i = 0, len = var_map.count(identifier); i < len; ++i,++it) {
+    for (int i = 0, len = var_map.count(identifier); i < len; ++i, ++it) {
 		return it->second;
 	}
     return NULL;
