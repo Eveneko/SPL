@@ -206,7 +206,7 @@ void irStmt(AST *node){
     }
     // IF
     else if(node->child[0]->type_name.compare("IF") == 0){
-        int expid = irExp(node->child[0]);
+        int expid = irExp(node->child[2]);
         irStmt(node->child[4]);
         int tbranch = genid(new LabelTAC(tac_vector.size()));
         int jbranch;

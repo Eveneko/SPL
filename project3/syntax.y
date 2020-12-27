@@ -45,17 +45,13 @@
 %left BITOR
 %left BITXOR
 %left BITAND
-%left NE EQ
-%left GE GT LE LT
-%left MINUS
-%left PLUS
-%left DIV
-%left MUL
-%right NOT
-%left LP RP
-%left LB RB
-%left DOT
-%left UMINUS
+%left EQ NE
+%left LE LT GE GT
+%left PLUS MINUS
+%left MUL DIV
+%right NOT UMINUS BITWISE
+%left LP RP LB RB
+%right DOT
 
 %%
 
@@ -191,7 +187,10 @@ Stmt:
 }   | WHILE LP Exp RP Stmt { 
     DISPLAY_SYNTAX("Stmt");
     $$ = new AST("Stmt", SymbolType::NONTERMINAL, "", @1.first_line, 5, $1, $2, $3, $4, $5);
-}   ;
+}   | WRITE LP Exp RP SEMI { 
+    DISPLAY_SYNTAX("Stmt");
+    $$ = new AST("Stmt", SymbolType::NONTERMINAL, "", @1.first_line, 5, $1, $2, $3, $4, $5); 
+};
 
 /* local definition */
 DefList: 
@@ -311,6 +310,9 @@ Exp:
 }   | CHAR {
     DISPLAY_SYNTAX("Exp");
     $$ = new AST("Exp", SymbolType::NONTERMINAL, "", @1.first_line, 1, $1);
+}   | READ LP RP { 
+    DISPLAY_SYNTAX("Exp");
+    $$ = new AST("Exp", SymbolType::NONTERMINAL, "", @1.first_line, 3, $1, $2, $3); 
 }   | ERROR_LEXEME {
 };
 Args: 
