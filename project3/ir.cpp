@@ -208,8 +208,9 @@ void irStmt(AST *node){
     // IF
     else if(node->child[0]->type_name.compare("IF") == 0){
         int expid = irExp(node->child[2]);
-        irStmt(node->child[4]);
+        // irStmt(node->child[4]);
         int tbranch = genid(new LabelTAC(tac_vector.size()));
+        irStmt(node->child[4]);
         int jbranch;
         if(node->child_num >= 6){
             jbranch = genid(new GOTOTAC(tac_vector.size(), genlist()));
@@ -238,7 +239,6 @@ void irStmt(AST *node){
     }
     // WRITE LP Exp RP SEMI
     else if (node->child[0]->type_name.compare("WRITE") == 0) {
-        DEBUG("Stmt begin > WRITE")
         int id = irExp(node->child[2]);
         genid(new WriteTAC(tac_vector.size(), id));
     } else {
