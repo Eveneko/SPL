@@ -201,7 +201,7 @@ void irStmt(AST *node){
     }
     // RETURN Exp SEMI
     else if(node->child[0]->type_name.compare("RETURN") == 0){
-        int expid = irExp(node->child[0]);
+        int expid = irExp(node->child[1]);
         genid(new ReturnTAC(tac_vector.size(), expid));
     }
     // IF
