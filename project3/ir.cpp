@@ -509,7 +509,7 @@ int irExp(AST *node, bool single){
                     suffix = &(dynamic_cast<DecTAC *>(tac_vector[id])->suffix);
                     id = genid(new AssignAddressTAC(tac_vector.size(), id));
                 }else{
-                    id = &(dynamic_cast<ParamTAC *>(tac_vector[id]->suffix));
+                    id = &(dynamic_cast<ParamTAC *>(tac_vector[id])->suffix);
                 }
                 int vec_size = vec.size();
                 while(vec_size--){
