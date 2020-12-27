@@ -1,0 +1,36 @@
+FUNCTION fact :
+PARAM t2
+t3 := #1
+IF t2 == t3 GOTO label6
+GOTO label9
+LABEL label6 :
+RETURN t2
+GOTO label16
+LABEL label9 :
+t10 := #1
+t11 := t2 - t10
+ARG t11
+t13 := CALL fact
+t14 := t2 * t13
+RETURN t14
+LABEL label16 :
+FUNCTION main :
+t18 := #0
+t19 := #0
+READ t20
+t18 := t20
+t22 := #1
+IF t18 > t22 GOTO label25
+GOTO label30
+LABEL label25 :
+ARG t18
+t27 := CALL fact
+t19 := t27
+GOTO label33
+LABEL label30 :
+t31 := #1
+t19 := t31
+LABEL label33 :
+WRITE t19
+t35 := #0
+RETURN t35
