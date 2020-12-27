@@ -128,6 +128,14 @@ wrong_char ('.+')
     yylval.ast_node = new AST("TYPE", SymbolType::TOKEN_VALUE, "char", yylineno, 0);
     return TYPE;
 }
+"read" {
+    yylval.ast_node=new AST("READ", SymbolType::TOKEN, "", yylineno, 0);
+    return READ;
+}
+"write" {
+    yylval.ast_node=new AST("WRITE", SymbolType::TOKEN, "", yylineno, 0);
+    return WRITE;
+}
 {wrong_id} {
     ERROR_TYPE_A();
     return ID; 
@@ -256,7 +264,7 @@ wrong_char ('.+')
     yylval.ast_node = new AST("RC", SymbolType::TOKEN, "", yylineno, 0);
     return RC;
 }
-[\n\r] { yycolno = 1; }
+\n { yycolno = 1; }
 [ \t]+ {}
 . { 
     ERROR_TYPE_A();
