@@ -35,16 +35,18 @@
 %type <ast_node> Exp
 %type <ast_node> Args
 
+// project3
+%token <ast_node> WRITE READ
+
 %nonassoc error
 %right ASSIGN
 %left OR
 %left AND
-%left NE
-%left EQ
-%left GE
-%left GT
-%left LE
-%left LT
+%left BITOR
+%left BITXOR
+%left BITAND
+%left NE EQ
+%left GE GT LE LT
 %left MINUS
 %left PLUS
 %left DIV

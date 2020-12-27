@@ -47,7 +47,7 @@ public:
 
 class FunctionTAC: public TAC {
 public:
-    FunctionTAC(int address, int name){
+    FunctionTAC(int address, string name){
         TAC::address = address;
         TAC::name = name;
     }
@@ -161,7 +161,7 @@ public:
     }
     string to_string(){
         char buffer[INFO_SIZE];
-        sprintf(buffer, "IF v%d %s t%d GOTO label%d", left_address, operator2str(op).c_str(), right_address, *label);
+        sprintf(buffer, "IF t%d %s t%d GOTO label%d", left_address, operator2str(op).c_str(), right_address, *label);
         return buffer;
     }
 };
@@ -293,7 +293,7 @@ void irExtDef(AST *node);
 Type *irSpecifier(AST *node);
 Type *irType(AST *node);
 Type *irStructSpecifier(AST *node);
-void *irFunc(AST *node, Type *type);
+void irFunc(AST *node, Type *type);
 void irCompSt(AST *node);
 void irDefList(AST *node);
 void irDef(AST *node);
@@ -313,4 +313,4 @@ int genid(TAC *tac);
 int *genlist(int id = tac_vector.size() + 1);
 
 void irIF(int id, int tbranch, int fbranch);
-void irWHILE();
+void irWHILE(vector<int>* stat_vec, int end, int target);
