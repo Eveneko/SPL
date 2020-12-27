@@ -44,7 +44,7 @@ string operator2str(Operator op){
  * Program: ExtDefList
 */
 void irProgram(AST *root){
-    irinit();
+    irInit();
 
     irExrDefList(root->child[0]);
     for(int i = 1; i < tac_vector.size(); ++i){
@@ -664,7 +664,7 @@ void irWHILE(vector<int>* stat_vec, int end, int target){
     }
 }
 
-void irinit(){
+void irInit(){
     tac_vector.clear();
     tac_vector.push_back(new TAC());
     table.clear();

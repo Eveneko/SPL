@@ -283,7 +283,6 @@ public:
     }
 };
 
-extern vector<TAC *> tac_vector;
 extern map<string, int> table;
 
 void irInit();
