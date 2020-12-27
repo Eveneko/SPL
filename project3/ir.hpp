@@ -11,8 +11,8 @@ enum class Operator;
 string operator2str(Operator op);
 
 /* Three-Address Code Specification */
-
-extern vector<TAC *> tac_vector;
+class TAC;
+extern vector<TAC*> tac_vector;
 
 class TAC{
 public:
@@ -283,6 +283,7 @@ public:
     }
 };
 
+extern vector<TAC *> tac_vector;
 extern map<string, int> table;
 
 void irInit();
