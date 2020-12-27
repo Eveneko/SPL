@@ -40,6 +40,8 @@ string operator2str(Operator op){
     }
 }
 
+vector<TAC*> tac_vector;
+
 /**
  * Program: ExtDefList
 */
