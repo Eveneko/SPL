@@ -284,6 +284,7 @@ public:
 };
 
 extern map<string, int> table;
+extern vector<TAC*> tac_vector;
 
 void irInit();
 void irProgram(AST *root);
