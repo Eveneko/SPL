@@ -1,6 +1,7 @@
 %{
-    #include"y.tab.h"
-    #include"semantic.hpp"
+    #include "y.tab.h"
+    #include "semantic.hpp"
+    #include "ir.hpp"
     #include <assert.h>
     // just let you know you have macros!
     #define EXIT_OK 0
