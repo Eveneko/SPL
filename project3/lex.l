@@ -1,6 +1,5 @@
 %{
     #include "y.tab.h"
-    #include "semantic.hpp"
     #include "ir.hpp"
     #include <assert.h>
     // just let you know you have macros!
@@ -16,7 +15,7 @@
 
     #define ERROR_TYPE_A() fprintf(stdout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext); syntax_error = 1;
     #define ERROR_TYPE_B(lineno, msg) fprintf(stdout, "Error type B at Line %d: %s\n", lineno, msg); syntax_error = 1;
-    #define DEBUG(syntax) fprintf(stdout, "%s(%d)\n", syntax, yylineno);
+    // #define DEBUG(syntax) fprintf(stdout, "%s(%d)\n", syntax, yylineno);
 
     #define DISPLAY_SYNTAX(syntax) // fprintf(stdout, "%s(%d)\n", syntax, yylineno);
     #define DISPLAY_TOKEN(token) // fprintf(stdout, "%s[%d](%s)\n", token, yycolno, yytext);

@@ -1,6 +1,6 @@
 #include "semantic.hpp"
 
-#define DEBUG(s, node)
+// #define DEBUG(s, node)
 
 multimap<string, Variable_Type*> var_map = multimap<string, Variable_Type*>();
 multimap<string, Structure_Type*> type_map = multimap<string, Structure_Type*>();
@@ -144,12 +144,12 @@ Type *EMPTYTYPE = new Type();
 Variable_Type *EMPTYVAR = new Variable_Type("$", EMPTYTYPE);
 
 void checkProgram(AST *root) {
-    DEBUG("checkProgram", root);
+    // DEBUG("checkProgram", root);
     checkExtDefList(root->child[0]);
 }
 
 void checkExtDefList(AST *node) {
-    DEBUG("checkExtDefList", node);
+    // DEBUG("checkExtDefList", node);
     switch (node->child_num) {
         case 0: 
             return;
@@ -176,7 +176,7 @@ void report_semantic_error(const char *s,...) {
  * ExtDef: Specifier FunDec CompSt
  */
 void checkExtDef(AST *node) {
-    DEBUG("checkExtDef", node);
+    // DEBUG("checkExtDef", node);
     assert(node->child[0]->type_name.compare("Specifier") == 0);
     Type *type = checkSpecifier(node->child[0]);
     if (node->child[1]->type_name.compare("ExtDecList") == 0) {
@@ -202,7 +202,7 @@ void checkExtDef(AST *node) {
  * Specifier: StructSpecifier
  */
 Type *checkSpecifier(AST *node) {
-    DEBUG("parseSpecifier", node);
+    // DEBUG("parseSpecifier", node);
     if (node->child[0]->type_name.compare("TYPE") == 0) {
         // Specifier: TYPE
         return checkType(node->child[0]);
@@ -214,7 +214,7 @@ Type *checkSpecifier(AST *node) {
 }
 
 Primitive_Type *checkType(AST *node) {
-    DEBUG("checkType", node);
+    // DEBUG("checkType", node);
     if (node->value.compare("int") == 0) {
         return new Primitive_Type(TokenType::INT_T, node->lineno);
     }
@@ -232,7 +232,7 @@ Primitive_Type *checkType(AST *node) {
  * StructSpecifier: STRUCT ID
  */
 Type *checkSructSpecifier(AST *node) {
-    DEBUG("checkSructSpecifier", node);
+    // DEBUG("checkSructSpecifier", node);
     assert(node->child[0]->type_name.compare("STRUCT") == 0);
     assert(node->child[1]->type_name.compare("ID") == 0);
     string identifier = checkID(node->child[1]);
@@ -257,7 +257,7 @@ Type *checkSructSpecifier(AST *node) {
  * FunDec: ID LP RP
  */
 Variable_Type *checkFunc(AST *node, Type *type) {
-    DEBUG("checkFunc", node);
+    // DEBUG("checkFunc", node);
     assert(node->child[0]->type_name.compare("ID") == 0);
     assert(node->child[1]->type_name.compare("LP") == 0);
     string identifier = checkID(node->child[0]);
@@ -272,7 +272,7 @@ Variable_Type *checkFunc(AST *node, Type *type) {
 }
 
 string checkID(AST *node) {
-    DEBUG("checkID", node);
+    // DEBUG("checkID", node);
     return node->value;
 }
 
@@ -280,7 +280,7 @@ string checkID(AST *node) {
  * CompSt: LC DefList StmtList RC
  */
 void checkCompSt(AST *node, Type *type) {
-    DEBUG("checkCompSt", node);
+    // DEBUG("checkCompSt", node);
     assert(node->child[0]->type_name.compare("LC") == 0);
     assert(node->child[1]->type_name.compare("DefList") == 0);
     assert(node->child[2]->type_name.compare("StmtList") == 0);
@@ -295,7 +295,7 @@ void checkCompSt(AST *node, Type *type) {
  * DefList: %empty
  */
 vector<Variable_Type*> checkDefList(AST *node) {
-    DEBUG("checkDefList", node);
+    // DEBUG("checkDefList", node);
     if (node->child_num == 0) {
         // DefList: %empty
         return vector<Variable_Type*>();
@@ -312,7 +312,7 @@ vector<Variable_Type*> checkDefList(AST *node) {
  * Specifier DecList SEMI
  */
 vector<Variable_Type*> checkDef(AST *node) {
-    DEBUG("checkDef", node);
+    // DEBUG("checkDef", node);
     assert(node->child[0]->type_name.compare("Specifier") == 0);
     assert(node->child[1]->type_name.compare("DecList") == 0);
     assert(node->child[2]->type_name.compare("SEMI") == 0);
@@ -326,7 +326,7 @@ vector<Variable_Type*> checkDef(AST *node) {
  * DecList: Dec COMMA DecList
  */
 vector<Variable_Type*> checkDecList(AST *node, Type *type) {
-    DEBUG("checkDecList", node);
+    // DEBUG("checkDecList", node);
     assert(node->type_name.compare("DecList") == 0);
     assert(node->child[0]->type_name.compare("Dec") == 0);
     vector<Variable_Type*> variables = vector<Variable_Type*>();
@@ -347,7 +347,7 @@ vector<Variable_Type*> checkDecList(AST *node, Type *type) {
  * Dec: VarDec ASSIGN Exp
  */
 Variable_Type *checkDec(AST *node, Type *type) {
-    DEBUG("checkDec", node);
+    // DEBUG("checkDec", node);
     assert(node->type_name.compare("Dec") == 0);
     assert(node->child[0]->type_name.compare("VarDec") == 0);
     Variable_Type *variable = checkVarDec(node->child[0], type);
@@ -374,7 +374,7 @@ Variable_Type *checkDec(AST *node, Type *type) {
  * VarDec: VarDec LB INT RB
  */
 Variable_Type *checkVarDec(AST *node, Type *type) {
-    DEBUG("checkVarDec", node);
+    // DEBUG("checkVarDec", node);
     assert(node->type_name.compare("VarDec") == 0);
     if (node->child_num == 1) {
         assert(node->child[0]->type_name.compare("ID") == 0);
@@ -399,7 +399,7 @@ int checkINT(AST *node) {
 }
 
 Type *checkExp(AST *node, bool single) {
-    DEBUG("checkVarDec", node);
+    // DEBUG("checkVarDec", node);
     assert(node->type_name.compare("Exp") == 0);
     if (node->child_num == 1) {
         // CHAR
@@ -570,7 +570,7 @@ Type *checkExp(AST *node, bool single) {
  * StmtList: %empty
  */
 void checkStmtList(AST *node, Type *type) {
-    DEBUG("checkStmtList", node);
+    // DEBUG("checkStmtList", node);
     if (node->child_num == 0) {
         return;
     } else if (node->child_num == 2) {
@@ -593,7 +593,7 @@ void checkStmtList(AST *node, Type *type) {
  * Stmt: IF LP Exp RP Stmt ELSE Stmt
  */
 void checkStmt(AST *node, Type *type) {
-    DEBUG("checkStmt", node);
+    // DEBUG("checkStmt", node);
     if (node->child_num == 1) {
         // CompSt
         assert(node->child[0]->type_name.compare("CompSt") == 0);
@@ -662,7 +662,7 @@ void checkStmt(AST *node, Type *type) {
  * VarList: ParamDec
  */
 vector<Variable_Type*> checkVarList(AST *node) {
-    DEBUG("checkStmt", node);
+    // DEBUG("checkStmt", node);
     assert(node->child[0]->type_name.compare("ParamDec") == 0);
     vector<Variable_Type*> variables = vector<Variable_Type*>();
     Variable_Type *variable = checkParamDec(node->child[0]);
@@ -684,7 +684,7 @@ vector<Variable_Type*> checkVarList(AST *node) {
  * ParamDec: Specifier VarDec
  */
 Variable_Type *checkParamDec(AST *node) {
-    DEBUG("checkParamDec", node);
+    // DEBUG("checkParamDec", node);
     assert(node->child[0]->type_name.compare("Specifier") == 0);
     assert(node->child[1]->type_name.compare("VarDec") == 0);
     Type *type = checkSpecifier(node->child[0]);
@@ -698,7 +698,7 @@ Variable_Type *checkParamDec(AST *node) {
  * Args: Exp
  */
 vector<Type*> checkArgs(AST *node) {
-    DEBUG("checkArgs", node);
+    // DEBUG("checkArgs", node);
     assert(node->child[0]->type_name.compare("Exp") == 0);
     vector<Type*> types = vector<Type*>();
     Type *type = checkExp(node->child[0]);
