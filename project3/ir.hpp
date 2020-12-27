@@ -234,7 +234,7 @@ public:
     int right_address;
     ArgTAC(int address, int right_address){
         TAC::address = address;
-        this->right_address =right_address;
+        this->right_address = right_address;
     }
     string to_string(){
         char buffer[INFO_SIZE];

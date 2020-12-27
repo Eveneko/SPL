@@ -187,6 +187,7 @@ void irDecList(AST *node, Type *type){
  * Stmt: IF LP Exp RP Stmt
  * Stmt: IF LP Exp RP Stmt ELSE Stmt
  * Stmt: WHILE LP Exp RP Stmt
+ * WRITE LP Exp RP SEMI
  */
 vector<int> cont, br;
 
@@ -250,11 +251,11 @@ void irStmt(AST *node){
  * Dec: VarDec ASSIGN Exp
  */
 void irDec(AST *node, Type *type){
-    TAC *tac = irVarDec(node->child[0], type);
     int expid = 0;
     if(node->child_num > 1){
         expid = irExp(node->child[2]);
     }
+    TAC *tac = irVarDec(node->child[0], type);
     if(expid){
         dynamic_cast<AssignTAC *>(tac)->right_address = expid;
     }
@@ -315,7 +316,7 @@ TAC* irVarDec(AST *node, Type* type){
 int irExp(AST *node, bool single){
     // Exp ASSIGN Exp
     if(node->child[1]->type_name.compare("ASSIGN") == 0){
-        int lexpid = irExp(node->child[0]);
+        int lexpid = irExp(node->child[0], true);
         int rexpid = irExp(node->child[2]);
         if(typeid(*tac_vector[lexpid]) == typeid(AssignTAC)){
             dynamic_cast<AssignTAC *>(tac_vector[lexpid])->right_address = rexpid;
@@ -474,7 +475,7 @@ int irExp(AST *node, bool single){
     }
     // ID LP Args RP
     // ID LP RP
-    if(node->child[0]->type_name.compare("ID") == 0 && node->child_num == 1){
+    if(node->child[0]->type_name.compare("ID") == 0 && node->child_num > 1){
         string name = node->child[0]->value;
         if(node->child[2]->type_name.compare("Args") == 0){
             auto id_vec = irArgs(node->child[2]);
@@ -611,7 +612,7 @@ void irVarList(AST *node){
 void irParamDec(AST *node){
     Type *type = irSpecifier(node->child[0]);
     TAC *tac = irVarDec(node->child[1], type);
-    if(typeid(*tac)==typeid(AssignTAC)){
+    if(typeid(*tac) == typeid(AssignTAC)){
         putIR(tac->name, genid(new ParamTAC(tac_vector.size(), type, {})));
     }else{
         putIR(tac->name, genid(new ParamTAC(tac_vector.size(), type, dynamic_cast<DecTAC *>(tac)->sizes)));
