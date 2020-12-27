@@ -315,3 +315,5 @@ int *genlist(int id = tac_vector.size() + 1);
 
 void irIF(int id, int tbranch, int fbranch);
 void irWHILE(vector<int>* stat_vec, int end, int target);
+
+float formatPaser(string name, string value);

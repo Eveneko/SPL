@@ -1,6 +1,6 @@
 #include "ir.hpp"
 
-const int INFO_SIZE = 128;
+const int INFO_SIZE = 1024;
 string addr2str(int addr){
     char buffer[INFO_SIZE];
     if (addr > 0){
@@ -279,7 +279,7 @@ TAC* irVarDec(AST *node, Type* type){
             while(!ast_vec.empty()){
                 AST *ast = ast_vec.back();
                 ast_vec.pop_back();
-                int size = atof(ast->child[2]->value.c_str());
+                int size = formatPaser("INT", ast->child[2]->value);
                 int_vec.push_back(size);
             }
         }else{
@@ -578,7 +578,7 @@ int irExp(AST *node, bool single){
        node->child[0]->type_name.compare("CHAR") == 0 ||
        node->child[0]->type_name.compare("FLOAT") == 0){
         // value < 0, means not address
-        AssignTAC *tac = new AssignTAC(tac_vector.size(), -atof(node->child[0]->value.c_str()));
+        AssignTAC *tac = new AssignTAC(tac_vector.size(), -formatPaser(node->child[0]->type_name, node->child[0]->value));
         int id = genid(tac);
         return id;
     }
@@ -682,4 +682,14 @@ void irInit(){
     table.clear();
     cont.clear();
     br.clear();
+}
+
+float formatPaser(string name, string value){
+    if (name.compare("INT") == 0){
+        return atoi(value.c_str());
+    } else if (name.compare("FLOAT") == 0){
+        return atof(value.c_str());
+    } else {
+        return atoi(value.c_str());
+    }
 }
