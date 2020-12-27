@@ -141,7 +141,7 @@ public:
     }
     string to_string(){
         char buffer[INFO_SIZE];
-        sprintf(buffer, "GOTO label%d", TAC::address, *label);
+        sprintf(buffer, "GOTO label%d", *label);
         return buffer;
     }
 };
