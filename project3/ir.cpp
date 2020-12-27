@@ -269,7 +269,6 @@ void irDec(AST *node, Type *type){
 TAC* irVarDec(AST *node, Type* type){
     vector<AST *> ast_vec;
     ast_vec.push_back(node);
-    // vector<AST *> ast_vec = {node};
     vector<int> int_vec;
     string name;
     while(!ast_vec.empty()){
@@ -521,7 +520,6 @@ int irExp(AST *node, bool single){
     if(node->child[1]->type_name.compare("LB") == 0){
         vector<AST *> vec;
         vec.push_back(node);
-        // vector<AST *> vec = {node};
         int id;
         while(!vec.empty()){
             AST *top = vec.back();
@@ -558,7 +556,6 @@ int irExp(AST *node, bool single){
     if(node->child[1]->type_name.compare("DOT") == 0){
         vector<AST *> vec;
         vec.push_back(node);
-        // vector<AST *> vec = {node};
         int id;
         while(!vec.empty()){
             AST *top = vec.back();
@@ -627,8 +624,7 @@ void irParamDec(AST *node){
  * Args: Exp
  */
 vector<int> irArgs(AST *node){
-    // vector<int> arg_vec;
-    vector<int> arg_vec = vector<int>();
+    vector<int> arg_vec;
     int expid = irExp(node->child[0]);
     if(typeid(*tac_vector[expid]) == typeid(DecTAC)){
         expid = genid(new AssignAddressTAC(tac_vector.size(), expid));
@@ -689,10 +685,10 @@ void irInit(){
 }
 
 float formatPaser(string name, string value){
-    if (name.compare("INT") == 0){
-        return atoi(value.c_str());
-    } else if (name.compare("FLOAT") == 0){
+    if (name.compare("FLOAT") == 0){
         return atof(value.c_str());
+    } else if (name.compare("INT") == 0){
+        return atoi(value.c_str());
     } else {
         return atoi(value.c_str());
     }

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>CS323 Compilers</title>
+        <style>
+/* From extension marp-team.marp-vscode */
+#marp-vscode {
+  all: initial;
+}
+
+/* Override VS Code default CSS rules reverting to initial
+   https://github.com/microsoft/vscode/blob/master/src/vs/workbench/contrib/webview/browser/pre/main.js#L53 */
+body.marp-vscode {
+  padding: 0;
+}
+
+body.marp-vscode img {
+  max-width: unset;
+  max-height: unset;
+}
+
+body.marp-vscode a,
+body.marp-vscode a:hover,
+body.marp-vscode code {
+  color: unset;
+}
+
+body.marp-vscode blockquote {
+  background: unset;
+  border-color: unset;
+}
+
+@media screen {
+  body.marp-vscode {
+    overflow-y: scroll;
+  }
+
+  #marp-vscode svg[data-marpit-svg] {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
+    display: block;
+    margin: 20px;
+  }
+
+  #marp-vscode[data-polyfill] svg[data-marpit-svg] > foreignobject > section {
+    /* Workaround for wrong hit area caused by Chromium's rendering bug */
+    overflow: visible;
+  }
+
+  /* Based on https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+  #code-csp-warning {
+    background-color: #444;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.25);
+    color: white;
+    cursor: pointer;
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 22px;
+    margin: 16px;
+    padding: 6px;
+    position: fixed;
+    right: 0;
+    text-align: center;
+    top: 0;
+    word-wrap: break-word;
+  }
+
+  #code-csp-warning:hover {
+    text-decoration: none;
+    background-color: #007acc;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+  }
+}
+
+@media print {
+  body.marp-vscode #code-csp-warning {
+    display: none;
+  }
+
+  #marp-vscode[data-polyfill] svg[data-marpit-svg] > foreignobject > section {
+    /* Disable WebKit polyfill */
+    transform: none !important;
+  }
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        <script type="text/javascript">
+/* From extension marp-team.marp-vscode */
+!function(){"use strict";var t,e=(function(t,e){Object.defineProperty(e,"__esModule",{value:!0});const r="marpitSVGPolyfill:setZoomFactor,",o=Symbol();let n,i;function l(t){const e="object"==typeof t&&t.target||document,l="object"==typeof t?t.zoom:t;window[o]||(Object.defineProperty(window,o,{configurable:!0,value:!0}),window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(r)){const[,e]=t.split(","),r=Number.parseFloat(e);Number.isNaN(r)||(i=r)}}catch(t){console.error(t)}})));let a=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,r,o,s;t.style.transform||(t.style.transform="translateZ(0)");const c=l||i||t.currentScale||1;n!==c&&(n=c,a=c);const d=t.getBoundingClientRect(),{length:u}=t.children;for(let n=0;n<u;n+=1){const i=t.children[n],l=i.getScreenCTM();if(l){const t=null!==(r=null===(e=i.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==r?r:0,n=null!==(s=null===(o=i.y)||void 0===o?void 0:o.baseVal.value)&&void 0!==s?s:0,a=i.firstChild,{style:u}=a;u.transformOrigin||(u.transformOrigin=`${-t}px ${-n}px`),u.transform=`scale(${c}) matrix(${l.a}, ${l.b}, ${l.c}, ${l.d}, ${l.e-d.left}, ${l.f-d.top}) translateZ(0.0001px)`}}})),!1!==a&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${r}${a}`,"null"===window.origin?"*":window.origin)}))}n=1,i=void 0;const a=(t,e,r)=>{if(t.getAttribute(e)!==r)return t.setAttribute(e,r),!0};function s({once:t=!1,target:e=document}={}){const r="Apple Computer, Inc."===navigator.vendor?[l]:[];let o=!t;const n=()=>{for(const t of r)t({target:e});!function(t=document){Array.from(t.querySelectorAll('svg[data-marp-fitting="svg"]'),(t=>{var e;const r=t.firstChild,o=r.firstChild,{scrollWidth:n,scrollHeight:i}=o;let l,s=1;if(t.hasAttribute("data-marp-fitting-code")&&(l=null===(e=t.parentElement)||void 0===e?void 0:e.parentElement),t.hasAttribute("data-marp-fitting-math")&&(l=t.parentElement),l){const t=getComputedStyle(l),e=Math.ceil(l.clientWidth-parseFloat(t.paddingLeft||"0")-parseFloat(t.paddingRight||"0"));e&&(s=e)}const c=Math.max(n,s),d=Math.max(i,1),u=`0 0 ${c} ${d}`;a(r,"width",`${c}`),a(r,"height",`${d}`),a(t,"preserveAspectRatio",getComputedStyle(t).getPropertyValue("--preserve-aspect-ratio")||"xMinYMin meet"),a(t,"viewBox",u)&&t.classList.toggle("__reflow__")}))}(e),o&&window.requestAnimationFrame(n)};return n(),()=>{o=!1}}const c=Symbol(),d=(t=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(t[c])return t[c];const e=s({target:t}),r=()=>{e(),delete t[c]};return Object.defineProperty(t,c,{configurable:!0,value:r}),r};e.browser=d,e.default=d,e.observer=s}(t={exports:{}},t.exports),t.exports);!function(){if(document.getElementById("marp-vscode")){document.body.classList.add("marp-vscode");const t=document.querySelectorAll("style:not(#marp-vscode-style):not(#_defaultStyles)"),r=document.querySelectorAll('link[rel="stylesheet"]:not([href*="marp-vscode"])');t.forEach((t=>t.remove())),r.forEach((t=>t.remove())),e.observer()}}()}();
+</script>
+
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="cs323-compilers">CS323 Compilers</h1>
+<p>Name: Yubin Hu</p>
+<p>ID: 11712121</p>
+<h2 id="basic-requirement">Basic Requirement</h2>
+<p>My code generator shall translate the input SPL program into the TAC instructions.</p>
+<p>SPL program:</p>
+<pre><code><code><div>int main()
+{
+    int n;
+    n = read();
+    if (n &gt; 0) write(1);
+    else if (n &lt; 0) write (-1);
+    else write(0);
+    return 0;
+}
+</div></code></code></pre>
+<p>TAC:</p>
+<pre><code><code><div>FUNCTION main :
+READ t1
+v1 := t1
+t2 := #0
+IF v1 &gt; t2 GOTO label1
+GOTO label2
+LABEL label1 :
+t3 := #1
+WRITE t3
+GOTO label3
+LABEL label2 :
+t4 := #0
+IF v1 &lt; t4 GOTO label4
+GOTO label5
+LABEL label4 :
+t5 := #1
+t6 := #0 - t5
+WRITE t6
+GOTO label6
+LABEL label5 :
+t7 := #0
+WRITE t7
+LABEL label6 :
+LABEL label3 :
+t8 := #0
+RETURN t8
+</div></code></code></pre>
+<p>Follow Appendix A(Three-Address Code Specification)'s <code>Table 5: Three-address-code specification</code>, we implement <code>ir.cpp</code> and <code>ir.hpp</code>. Special attention should be paid to the fact that WRITE/READ is not defined in lex, syntax, semantic, so in addition to processing in ir, the definition must be implemented in the above places.</p>
+<p>We implement this base class TAC in <code>ir.hpp</code>, other classes inherit the base class TAC.</p>
+<ul>
+<li><code>void irProgram(AST *root);</code> Enter ir program.</li>
+<li>
+<pre><code class="language-void"><code><div>  void irExtDecList(AST *node, Type * type);
+  void irExtDef(AST *node);
+  Type *irSpecifier(AST *node);
+  Type *irType(AST *node);
+  Type *irStructSpecifier(AST *node);
+  void irFunc(AST *node, Type *type);
+  void irCompSt(AST *node);
+  void irDefList(AST *node);
+  void irDef(AST *node);
+  void irDecList(AST *node, Type *type);
+  void irStmt(AST *node);
+  void irStmtList(AST *node);
+  void irDec(AST *node, Type *type);
+  TAC* irVarDec(AST *node, Type* type);
+  int irExp(AST *node, bool single=false);
+  void irVarList(AST *node);
+  void irParamDec(AST *node);
+  vector&lt;int&gt; irArgs(AST *node);
+</div></code></code></pre>
+Follow the <code>Table 5: Three-address-code specification</code>, we implement them.</li>
+</ul>
+<h2 id="test">Test</h2>
+<p>We use <code>genIR.sh</code> to test the IR.</p>
+<h2 id="bouns">Bouns</h2>
+<p>NULL</p>
+
+    </body>
+    </html>
