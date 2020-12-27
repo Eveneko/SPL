@@ -267,8 +267,9 @@ void irDec(AST *node, Type *type){
  * VarDec: VarDec LB INT RB
  */
 TAC* irVarDec(AST *node, Type* type){
-    vector<AST*> ast_vec;
-    ast_vec.push_back(node);
+    // vector<AST *> ast_vec;
+    // ast_vec.push_back(node);
+    vector<AST *> ast_vec = {node};
     vector<int> int_vec;
     string name;
     while(!ast_vec.empty()){
@@ -624,7 +625,8 @@ void irParamDec(AST *node){
  * Args: Exp
  */
 vector<int> irArgs(AST *node){
-    vector<int> arg_vec;
+    // vector<int> arg_vec;
+    vector<int> arg_vec = vector<int>();
     int expid = irExp(node->child[0]);
     if(typeid(*tac_vector[expid]) == typeid(DecTAC)){
         expid = genid(new AssignAddressTAC(tac_vector.size(), expid));
