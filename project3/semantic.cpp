@@ -619,7 +619,6 @@ void checkStmt(AST *node, Type *type) {
         assert(node->child[1]->type_name.compare("LP") == 0);
         assert(node->child[2]->type_name.compare("Exp") == 0);
         assert(node->child[3]->type_name.compare("RP") == 0);
-        assert(node->child[4]->type_name.compare("Stmt") == 0);
         if (node->child[0]->type_name.compare("IF") == 0) {
             // IF LP Exp RP Stmt
             Type *returnType = checkExp(node->child[2]);
