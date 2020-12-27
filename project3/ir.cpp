@@ -267,9 +267,9 @@ void irDec(AST *node, Type *type){
  * VarDec: VarDec LB INT RB
  */
 TAC* irVarDec(AST *node, Type* type){
-    // vector<AST *> ast_vec;
-    // ast_vec.push_back(node);
-    vector<AST *> ast_vec = {node};
+    vector<AST *> ast_vec;
+    ast_vec.push_back(node);
+    // vector<AST *> ast_vec = {node};
     vector<int> int_vec;
     string name;
     while(!ast_vec.empty()){
@@ -519,9 +519,9 @@ int irExp(AST *node, bool single){
     }
     // Exp LB Exp RB
     if(node->child[1]->type_name.compare("LB") == 0){
-        // vector<AST *> vec;
-        // vec.push_back(node);
-        vector<AST *> vec = {node};
+        vector<AST *> vec;
+        vec.push_back(node);
+        // vector<AST *> vec = {node};
         int id;
         while(!vec.empty()){
             AST *top = vec.back();
@@ -556,9 +556,9 @@ int irExp(AST *node, bool single){
     }
     // Exp DOT ID
     if(node->child[1]->type_name.compare("DOT") == 0){
-        // vector<AST *> vec;
-        // vec.push_back(node);
-        vector<AST *> vec = {node};
+        vector<AST *> vec;
+        vec.push_back(node);
+        // vector<AST *> vec = {node};
         int id;
         while(!vec.empty()){
             AST *top = vec.back();
