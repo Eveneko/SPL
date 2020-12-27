@@ -287,7 +287,7 @@ extern map<string, int> table;
 
 void irInit();
 void irProgram(AST *root);
-void irExrDefList(AST *node);
+void irExtDefList(AST *node);
 void irExtDecList(AST *node, Type * type);
 void irExtDef(AST *node);
 Type *irSpecifier(AST *node);

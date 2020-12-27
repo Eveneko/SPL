@@ -49,7 +49,7 @@ map<string, int> table;
 void irProgram(AST *root){
     irInit();
 
-    irExrDefList(root->child[0]);
+    irExtDefList(root->child[0]);
     for(int i = 1; i < tac_vector.size(); ++i){
         fprintf(stdout, "%s\n", string(tac_vector[i]->to_string()).c_str());
     }
@@ -58,10 +58,10 @@ void irProgram(AST *root){
 /**
  * ExtDefList: ExtDef ExtDefList | %empty
 */
-void irExrDefList(AST *node){
+void irExtDefList(AST *node){
     while(node->child_num){
         irExtDef(node->child[0]);
-        node = node->child[0];
+        node = node->child[1];
     }
 }
 
