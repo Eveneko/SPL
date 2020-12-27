@@ -1,6 +1,6 @@
 #include "ir.hpp"
 
-const int INFO_SIZE = 1024;
+const int INFO_SIZE = 128;
 string addr2str(int addr){
     char buffer[INFO_SIZE];
     if (addr > 0){
