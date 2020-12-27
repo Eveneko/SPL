@@ -301,7 +301,7 @@ TAC* irVarDec(AST *node, Type* type){
  *    | INT | FLOAT | CHAR
  *    | READ LP RP
  */
-int irExp(AST *node, bool single=false){
+int irExp(AST *node, bool single){
     // Exp ASSIGN Exp
     if(node->child[1]->type_name.compare("ASSIGN") == 0){
         int lexpid = irExp(node->child[0]);
