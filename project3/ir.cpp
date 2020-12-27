@@ -315,41 +315,67 @@ TAC* irVarDec(AST *node, Type* type){
  *    | READ LP RP
  */
 int irExp(AST *node, bool single){
-    // Exp ASSIGN Exp
-    if(node->child[1]->type_name.compare("ASSIGN") == 0){
-        int lexpid = irExp(node->child[0], true);
-        int rexpid = irExp(node->child[2]);
-        if(typeid(*tac_vector[lexpid]) == typeid(AssignTAC)){
-            dynamic_cast<AssignTAC *>(tac_vector[lexpid])->right_address = rexpid;
-        }else{
-            dynamic_cast<CopyValueTAC *>(tac_vector[lexpid])->right_address = rexpid;
+    // READ LP RP
+    if(node->child[0]->type_name.compare("READ") == 0){
+        ReadTAC *tac = new ReadTAC(tac_vector.size());
+        int id = genid(tac);
+        return id;
+    }
+    // INT | FLOAT | CHAR
+    if(node->child[0]->type_name.compare("INT") == 0 ||
+       node->child[0]->type_name.compare("CHAR") == 0 ||
+       node->child[0]->type_name.compare("FLOAT") == 0) {
+        // value < 0, means not address
+        AssignTAC *tac = new AssignTAC(tac_vector.size(), -formatPaser(node->child[0]->type_name, node->child[0]->value));
+        int id = genid(tac);
+        return id;
+    }
+    // MINUS Exp | MINUS Exp %prec UMINUS
+    if(node->child[0]->type_name.compare("MINUS") == 0){
+        int expid = irExp(node->child[1]);
+        ArithmeticTAC *tac = new ArithmeticTAC(tac_vector.size(), Operator::MINUS_OPERATOR, 0, expid);
+        int id = genid(tac);
+        return id;
+    }
+    // NOT Exp
+    if(node->child[0]->type_name.compare("NOT") == 0){
+        int expid = irExp(node->child[1]);
+        tac_vector[expid]->swap_flag ^= 1;
+        return expid;
+    }
+    // ID LP Args RP
+    // ID LP RP
+    if(node->child[0]->type_name.compare("ID") == 0 && node->child_num > 1){
+        string name = node->child[0]->value;
+        if(node->child[2]->type_name.compare("Args") == 0){
+            auto id_vec = irArgs(node->child[2]);
+            for(auto id: id_vec){
+                genid(new ArgTAC(tac_vector.size(), id));
+            }
         }
-        return rexpid;
+        int id = genid(new CallTAC(tac_vector.size(), name));
+        return id;
+    }
+    // ID
+    if(node->child[0]->type_name.compare("ID") == 0){
+        string name = node->child[0]->value;
+        int id = getIR(name);
+        int res_id = 0;
+        if(single){
+            if(!id){
+                id = tac_vector.size();
+                putIR(name, id);
+            }
+            res_id = genid(new AssignTAC(id, 0));
+        }else if(!id){
+            // specially
+            res_id = genid(new AssignTAC(tac_vector.size(), 0));
+        }else{
+            res_id = id;
+        }
+        return res_id;
     }
     // Exp [{AND}|{OR}] Exp
-    if(node->child[1]->type_name.compare("AND") == 0){
-        int lexpid = irExp(node->child[0]);
-        int lswap_flag = tac_vector[lexpid]->swap_flag;
-        int labelid = genid(new LabelTAC(tac_vector.size()));
-        int rexpid = irExp(node->child[2]);
-        int rswap_flag = tac_vector[rexpid]->swap_flag;
-        if(lswap_flag){
-            *dynamic_cast<GOTOTAC *>(tac_vector[lexpid+1])->label = labelid;
-            if(rswap_flag){
-                dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = dynamic_cast<IFTAC *>(tac_vector[rexpid])->label;
-            }else{
-                dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = dynamic_cast<GOTOTAC *>(tac_vector[rexpid+1])->label;
-            }
-        }else{
-            *dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = labelid;
-            if(rswap_flag){
-                dynamic_cast<GOTOTAC *>(tac_vector[lexpid+1])->label = dynamic_cast<IFTAC *>(tac_vector[rexpid])->label;
-            }else{
-                dynamic_cast<GOTOTAC *>(tac_vector[lexpid+1])->label = dynamic_cast<GOTOTAC *>(tac_vector[rexpid+1])->label;
-            }
-        }
-        return rexpid;
-    }
     if(node->child[1]->type_name.compare("OR") == 0){
         int lexpid = irExp(node->child[0]);
         int lswap_flag = tac_vector[lexpid]->swap_flag;
@@ -369,6 +395,29 @@ int irExp(AST *node, bool single){
                 dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = dynamic_cast<GOTOTAC *>(tac_vector[rexpid+1])->label;
             }else{
                 dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = dynamic_cast<IFTAC *>(tac_vector[rexpid])->label;
+            }
+        }
+        return rexpid;
+    }
+    if(node->child[1]->type_name.compare("AND") == 0){
+        int lexpid = irExp(node->child[0]);
+        int lswap_flag = tac_vector[lexpid]->swap_flag;
+        int labelid = genid(new LabelTAC(tac_vector.size()));
+        int rexpid = irExp(node->child[2]);
+        int rswap_flag = tac_vector[rexpid]->swap_flag;
+        if(lswap_flag){
+            *dynamic_cast<GOTOTAC *>(tac_vector[lexpid+1])->label = labelid;
+            if(rswap_flag){
+                dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = dynamic_cast<IFTAC *>(tac_vector[rexpid])->label;
+            }else{
+                dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = dynamic_cast<GOTOTAC *>(tac_vector[rexpid+1])->label;
+            }
+        }else{
+            *dynamic_cast<IFTAC *>(tac_vector[lexpid])->label = labelid;
+            if(rswap_flag){
+                dynamic_cast<GOTOTAC *>(tac_vector[lexpid+1])->label = dynamic_cast<IFTAC *>(tac_vector[rexpid])->label;
+            }else{
+                dynamic_cast<GOTOTAC *>(tac_vector[lexpid+1])->label = dynamic_cast<GOTOTAC *>(tac_vector[rexpid+1])->label;
             }
         }
         return rexpid;
@@ -428,6 +477,17 @@ int irExp(AST *node, bool single){
         int gotoid = genid(gototac);
         return ifid;
     }
+    // Exp ASSIGN Exp
+    if (node->child[1]->type_name.compare("ASSIGN") == 0){
+        int rightid = irExp(node->child[2]);
+        int leftid = irExp(node->child[0], true);
+        if (typeid(*tac_vector[leftid])==typeid(AssignTAC)){
+            dynamic_cast<AssignTAC *>(tac_vector[leftid])->right_address = rightid;
+        } else {
+            dynamic_cast<CopyValueTAC *>(tac_vector[leftid])->right_address = rightid;
+        }
+        return rightid;
+    }
     // Exp [{PLUS}|{MINUS}|{MUL}|{DIV}] Exp
     if(node->child[1]->type_name.compare("PLUS") == 0){
         int lexpid = irExp(node->child[0]);
@@ -457,59 +517,11 @@ int irExp(AST *node, bool single){
         int id = genid(tac);
         return id;
     }
-    // LP Exp RP
-    if(node->child[0]->type_name.compare("LP") == 0){
-        return irExp(node->child[1]);
-    }
-    // MINUS Exp | MINUS Exp %prec UMINUS
-    if(node->child[0]->type_name.compare("MINUS") == 0){
-        int expid = irExp(node->child[1]);
-        ArithmeticTAC *tac = new ArithmeticTAC(tac_vector.size(), Operator::MINUS_OPERATOR, 0, expid);
-        int id = genid(tac);
-        return id;
-    }
-    // NOT Exp
-    if(node->child[0]->type_name.compare("NOT") == 0){
-        int expid = irExp(node->child[1]);
-        tac_vector[expid]->swap_flag ^= 1;
-        return expid;
-    }
-    // ID LP Args RP
-    // ID LP RP
-    if(node->child[0]->type_name.compare("ID") == 0 && node->child_num > 1){
-        string name = node->child[0]->value;
-        if(node->child[2]->type_name.compare("Args") == 0){
-            auto id_vec = irArgs(node->child[2]);
-            for(auto id: id_vec){
-                genid(new ArgTAC(tac_vector.size(), id));
-            }
-        }
-        int id = genid(new CallTAC(tac_vector.size(), name));
-        return id;
-    }
-    // ID
-    if(node->child[0]->type_name.compare("ID") == 0 && node->child_num == 1){
-        string name = node->child[0]->value;
-        int id = getIR(name);
-        int res_id = 0;
-        if(single){
-            if(!id){
-                id = tac_vector.size();
-                putIR(name, id);
-            }
-            res_id = genid(new AssignTAC(id, 0));
-        }else if(!id){
-            // specially
-            res_id = genid(new AssignTAC(tac_vector.size(), 0));
-        }else{
-            res_id = id;
-        }
-        return res_id;
-    }
     // Exp LB Exp RB
     if(node->child[1]->type_name.compare("LB") == 0){
-        vector<AST *> vec;
-        vec.push_back(node);
+        // vector<AST *> vec;
+        // vec.push_back(node);
+        vector<AST *> vec = {node};
         int id;
         while(!vec.empty()){
             AST *top = vec.back();
@@ -544,8 +556,9 @@ int irExp(AST *node, bool single){
     }
     // Exp DOT ID
     if(node->child[1]->type_name.compare("DOT") == 0){
-        vector<AST *> vec;
-        vec.push_back(node);
+        // vector<AST *> vec;
+        // vec.push_back(node);
+        vector<AST *> vec = {node};
         int id;
         while(!vec.empty()){
             AST *top = vec.back();
@@ -574,20 +587,9 @@ int irExp(AST *node, bool single){
             return genid(new AssignValueTAC(tac_vector.size(), id));
         }
     }
-    // INT | FLOAT | CHAR
-    if(node->child[0]->type_name.compare("INT") == 0 ||
-       node->child[0]->type_name.compare("CHAR") == 0 ||
-       node->child[0]->type_name.compare("FLOAT") == 0){
-        // value < 0, means not address
-        AssignTAC *tac = new AssignTAC(tac_vector.size(), -formatPaser(node->child[0]->type_name, node->child[0]->value));
-        int id = genid(tac);
-        return id;
-    }
-    // READ LP RP
-    if(node->child[0]->type_name.compare("READ") == 0){
-        ReadTAC *tac = new ReadTAC(tac_vector.size());
-        int id = genid(tac);
-        return id;
+    // LP Exp RP
+    if(node->child[0]->type_name.compare("LP") == 0){
+        return irExp(node->child[1]);
     }
 }
 
