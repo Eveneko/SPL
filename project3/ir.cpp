@@ -235,6 +235,14 @@ void irStmt(AST *node){
         irWHILE(&cont, cont_size, loop_start);
         irWHILE(&br, br_size, fbranch);
     }
+    // WRITE LP Exp RP SEMI
+    else if (node->child[0]->type_name.compare("WRITE") == 0) {
+        DEBUG("Stmt begin > WRITE")
+        int id = irExp(node->child[2]);
+        genid(new WriteTAC(tac_vector.size(), id));
+    } else {
+        assert(NULL);
+    }
 }
 
 /**

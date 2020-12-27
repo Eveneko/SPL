@@ -589,6 +589,7 @@ void checkStmtList(AST *node, Type *type) {
  * Stmt: RETURN Exp SEMI
  * Stmt: IF LP Exp RP Stmt
  * Stmt: WHILE LP Exp RP Stmt
+ * Stmt: WRITE LP Exp RP SEMI
  * Stmt: IF LP Exp RP Stmt ELSE Stmt
  */
 void checkStmt(AST *node, Type *type) {
