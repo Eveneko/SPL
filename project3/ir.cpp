@@ -41,6 +41,7 @@ string operator2str(Operator op){
 }
 
 vector<TAC*> tac_vector;
+map<string, int> table;
 
 /**
  * Program: ExtDefList
